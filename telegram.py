@@ -28,7 +28,7 @@ from telebot.types import Message
 from telebot import apihelper
 
 # MAIN_URL = f'https://api.telegram.org/bot{TOKEN}'
-TOKEN = os.environ['TOKEN']
+TIBO_TELEGRAM_BOT_TOKEN = os.environ['TIBO_TELEGRAM_BOT_TOKEN']
 # TOKEN = '1007635405:AAGne0oJ0ERYnAftVfCUwFc3ZIaDzf-NDSU'
 OPEN_WAETHER_MAP_TOKEN = 'e92f4ab649c62931261157c7cf958e1d'
 # TIMEZONE = 'Asia/Yekaterinburg'
@@ -87,7 +87,7 @@ def listener(messages):
             print(str(m.chat.first_name) + " [" + str(m.chat.id) + "]: " + m.text)
 
 
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(TIBO_TELEGRAM_BOT_TOKEN)
 bot.set_update_listener(listener)  # register listener
 STICKERID = 'CAACAgIAAxkBAAMbXrPw-PFI1fxdd1PM4gvH4ByBzU8AAqwAA1dPFQieKyFie6ajbxkE'
 
@@ -419,7 +419,7 @@ def query_text(inline_query):
 app = Flask(__name__)
 
 
-@app.route('/' + TOKEN, methods=['POST'])
+@app.route('/' + TIBO_TELEGRAM_BOT_TOKEN, methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
     return "!", 200
@@ -428,7 +428,7 @@ def getMessage():
 @app.route('/')
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://itmem-bot.herokuapp.com/' + TOKEN)
+    bot.set_webhook(url='https://itmem-bot.herokuapp.com/' + TIBO_TELEGRAM_BOT_TOKEN)
     return "?", 200
 
 
