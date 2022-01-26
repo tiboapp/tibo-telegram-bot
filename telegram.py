@@ -13,8 +13,6 @@ bot.
 """
 import os
 import requests
-# import socket
-# import socks
 import random
 import logging
 # import json
@@ -29,52 +27,13 @@ from telebot import apihelper
 
 # MAIN_URL = f'https://api.telegram.org/bot{TOKEN}'
 TIBO_TELEGRAM_BOT_TOKEN = os.environ['TIBO_TELEGRAM_BOT_TOKEN']
-# TOKEN = '1007635405:AAGne0oJ0ERYnAftVfCUwFc3ZIaDzf-NDSU'
 OPEN_WAETHER_MAP_TOKEN = 'e92f4ab649c62931261157c7cf958e1d'
+
+
 # TIMEZONE = 'Asia/Yekaterinburg'
 # TIMEZONE_COMMON_NAME = 'Yekaterinburg'
 # P_TIMEZONE = pytz.timezone(config.TIMEZONE)
 # TIMEZONE_COMMON_NAME = config.TIMEZONE_COMMON_NAME
-
-proxy_bank = {
-    "proxy_list": {
-        "ip": "96.96.33.133",
-        "port": 1080,
-        "username": "",
-        "password": "",
-        "from": "http://free-proxy.cz/ru/proxylist/country/all/socks5/speed/all"
-    },
-    "proxy_list2": {
-        "ip": "149.28.79.225",
-        "port": 3128,
-        "username": "",
-        "password": "",
-        "from": "https://hidemy.name/ru/proxy-list/"
-    },
-    "proxy_bot": {
-        "ip": "grsst.s5.opennetwork.cc",
-        "port": 999,
-        "username": "41365750",
-        "password": "QSztxzyl",
-        "from": "@socks5_bot"
-    },
-    "proxy_bot2": {
-        "ip": "148.251.234.93",
-        "port": 1080,
-        "username": "41365750",
-        "password": "QSztxzyl",
-        "from": "https://sockslist.net/"
-    }
-}
-
-current_proxy = proxy_bank["proxy_list2"]
-proxy = f'socks5h://{current_proxy["ip"]}:{current_proxy["port"]}'
-
-
-# proxy = f'socks5h://{current_proxy["username"]}:{current_proxy["password"]}@{current_proxy["ip"]}:{current_proxy["port"]}'
-
-# socks.set_default_proxy(socks.SOCKS5, current_proxy["ip"], current_proxy["port"])
-# socket.socket = socks.socksocket
 
 
 def listener(messages):
@@ -275,146 +234,12 @@ def help_command(message):
     )
 
 
-# @bot.message_handler(content_types=['text'])
-# @bot.edited_message_handler(content_types=['text'])
-# def echo_digits(message: Message):
-#     print(message.from_user)
-#     print(message.from_user.username)
-#     if 'Alex Goodkid' in message.text:
-#         bot.reply_to(message, 'Alex is good kid')
-#         return
-#     reply = str(random.random())
-#     if message.from_user.id in USERS:
-#         reply += f"  {message.from_user.username}, hello again"
-#     bot.reply_to(message, reply)
-#     USERS.add(message.from_user.id)
-
-
 @bot.message_handler(content_types=['sticker'])
 def sticker_handler(message: Message):
     bot.send_sticker(message.chat.id, STICKERID)
     # print(message)
     # print(message.sticker)
 
-
-# @bot.inline_handler(lambda query: query.query == 'text')
-# def query_text(inline_query):
-#     try:
-#         print(inline_query)
-#         bot.send_chat_action(message, 'typing')
-#         r = types.InlineQueryResultArticle('1', 'Result', types.InputTextMessageContent('Result message.'))
-#         r2 = types.InlineQueryResultArticle('2', 'Result2', types.InputTextMessageContent('Result message2.'))
-#         bot.answer_inline_query(inline_query.id, [r, r2])
-#     except Exception as e:
-#         print(e)
-
-
-@bot.inline_handler(lambda query: len(query.query.split()) == 0)
-@bot.inline_handler(lambda query: len(query.query.split()) == 1)
-@bot.inline_handler(lambda query: len(query.query.split()) == 2)
-@bot.inline_handler(lambda query: len(query.query.split()) == 3)
-@bot.inline_handler(lambda query: len(query.query.split()) == 4)
-@bot.inline_handler(lambda query: len(query.query.split()) == 5)
-@bot.inline_handler(lambda query: len(query.query.split()) == 6)
-@bot.inline_handler(lambda query: len(query.query.split()) == 7)
-@bot.inline_handler(lambda query: len(query.query.split()) == 8)
-@bot.inline_handler(lambda query: len(query.query.split()) == 9)
-@bot.inline_handler(lambda query: len(query.query.split()) == 10)
-@bot.inline_handler(lambda query: len(query.query.split()) == 11)
-@bot.inline_handler(lambda query: len(query.query.split()) == 12)
-@bot.inline_handler(lambda query: len(query.query.split()) == 13)
-@bot.inline_handler(lambda query: len(query.query.split()) == 14)
-@bot.inline_handler(lambda query: len(query.query.split()) == 15)
-@bot.inline_handler(lambda query: len(query.query.split()) == 16)
-@bot.inline_handler(lambda query: len(query.query.split()) == 18)
-@bot.inline_handler(lambda query: len(query.query.split()) == 19)
-@bot.inline_handler(lambda query: len(query.query.split()) == 20)
-def query_text(inline_query):
-    try:
-        text = inline_query.query
-        print(inline_query)
-        thumbb = 'https://codebridgeplus.com/wp-content/uploads/bold.jpg'
-        thumbc = 'https://cdn0.iconfinder.com/data/icons/communication-technology/500/code_brackets-512.png'
-        thumbi = 'https://banner2.cleanpng.com/20180409/wiq/kisspng-computer-icons-html-element-ping-pong-5acc02f43d00e8.2242970015233195402499.jpg'
-        git_rp = 'https://github.githubassets.com/images/modules/logos_page/Octocat.png'
-        googlepic = 'http://cdn.geekwire.com/wp-content/uploads/2015/09/Screen-Shot-2015-09-01-at-9.03.40-AM.png'
-        code = types.InlineQueryResultArticle('2', 'Code', types.InputTextMessageContent('<code>{}</code>'.format(text),
-                                                                                         parse_mode="HTML"),
-                                              description='{}'.format(text), thumb_url=thumbc, thumb_width=20,
-                                              thumb_height=20)
-        bold = types.InlineQueryResultArticle('1', 'Bold',
-                                              types.InputTextMessageContent('<b>{}</b>'.format(text),
-                                                                            parse_mode="HTML"),
-                                              description='{}'.format(text), thumb_url=thumbb, thumb_width=20,
-                                              thumb_height=20)
-        italic = types.InlineQueryResultArticle('3', 'Italic',
-                                                types.InputTextMessageContent('<i>{}</i>'.format(text),
-                                                                              parse_mode="HTML"),
-                                                description='{}'.format(text), thumb_url=thumbi, thumb_width=20,
-                                                thumb_height=20)
-        google = types.InlineQueryResultArticle('7', 'Google Search', types.InputTextMessageContent(
-            '[{}](https://www.google.com/search?q={})'.format(text, text), parse_mode='Markdown'),
-                                                description='Search : {}'.format(text), thumb_url=googlepic)
-        githubrepo = types.InlineQueryResultArticle('5', 'Github Search repository', types.InputTextMessageContent(
-            '[Found repository](https://github.com/search?=&q={})'.format(text), parse_mode="Markdown"),
-                                                    thumb_url=git_rp)
-        bot.answer_inline_query(inline_query.id, [code, bold, italic, google, githubrepo], cache_time=1)
-    except Exception as e:
-        print(e)
-
-
-# @bot.inline_handler(lambda query: query.query == 'text')
-# def query_text(inline_query):
-#     try:
-#         r = types.InlineQueryResultArticle('1', 'Result1', types.InputTextMessageContent('hi'))
-#         r2 = types.InlineQueryResultArticle('2', 'Result2', types.InputTextMessageContent('hi'))
-#         bot.answer_inline_query(inline_query.id, [r, r2])
-#     except Exception as e:
-#         print(e)
-#
-#
-# @bot.inline_handler(lambda query: query.query == 'photo1')
-# def query_photo(inline_query):
-#     try:
-#         r = types.InlineQueryResultPhoto('1',
-#                                          'https://raw.githubusercontent.com/eternnoir/pyTelegramBotAPI/master/examples/detailed_example/kitten.jpg',
-#                                          'https://raw.githubusercontent.com/eternnoir/pyTelegramBotAPI/master/examples/detailed_example/kitten.jpg',
-#                                          input_message_content=types.InputTextMessageContent('hi'))
-#         r2 = types.InlineQueryResultPhoto('2',
-#                                           'https://raw.githubusercontent.com/eternnoir/pyTelegramBotAPI/master/examples/detailed_example/rooster.jpg',
-#                                           'https://raw.githubusercontent.com/eternnoir/pyTelegramBotAPI/master/examples/detailed_example/rooster.jpg')
-#         bot.answer_inline_query(inline_query.id, [r, r2], cache_time=1)
-#     except Exception as e:
-#         print(e)
-#
-#
-# @bot.inline_handler(lambda query: query.query == 'video')
-# def query_video(inline_query):
-#     try:
-#         r = types.InlineQueryResultVideo('1',
-#                                          'https://github.com/eternnoir/pyTelegramBotAPI/blob/master/tests/test_data/test_video.mp4?raw=true',
-#                                          'video/mp4', 'Video',
-#                                          'https://raw.githubusercontent.com/eternnoir/pyTelegramBotAPI/master/examples/detailed_example/rooster.jpg',
-#                                          'Title'
-#                                          )
-#         bot.answer_inline_query(inline_query.id, [r])
-#     except Exception as e:
-#         print(e)
-#
-#
-# @bot.inline_handler(lambda query: len(query.query) == 0)
-# def default_query(inline_query):
-#     try:
-#         r = types.InlineQueryResultArticle('1', 'default', types.InputTextMessageContent('default'))
-#         bot.answer_inline_query(inline_query.id, [r])
-#     except Exception as e:
-#         print(e)
-
-
-# @bot.message_handler(func=lambda message: True)
-# def echo_all(message: Message):
-#     bot.reply_to(message, message.text)
-#     bot.send_chat_action(message, 'typing')
 
 app = Flask(__name__)
 
@@ -433,13 +258,12 @@ def webhook():
 
 
 if __name__ == "__main__":
-    if 'TIBO_TELEGRAM_BOT_TOKEN' in os.environ:
+    if 'IDE' not in os.environ:
         # logger = telebot.logger
         # telebot.logger.setLevel(logging.INFO)
         app.run(host="0.0.0.0", port=os.environ.get('PORT', 8443))
         bot.send_message(41365750, 'Bot started in Heroku cloud')
     else:
-        apihelper.proxy = {'https': f'{proxy}'}
-        bot.send_message(41365750, 'Bot started from IDE over proxy')
+        bot.send_message(41365750, 'Bot started from IDE')
         bot.remove_webhook()
         bot.polling(none_stop=True)

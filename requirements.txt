@@ -1,5 +1,4 @@
-pyTelegramBotAPI
-PySocks
-requests[socks]
-flask
 gunicorn
+flask
+pyTelegramBotAPI
+requests

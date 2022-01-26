@@ -7,10 +7,9 @@ authors = ["Sergey Chudakov <csredrat@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.10"
 pyTelegramBotAPI = "^4.3.1"
-PySocks = "^1.7.1"
-requests = {extras = ["socks"], version = "^2.27.1"}
 Flask = "^2.0.2"
 gunicorn = "^20.1.0"
+requests = "^2.27.1"
 
 [tool.poetry.dev-dependencies]
 
