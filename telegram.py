@@ -247,6 +247,7 @@ app = Flask(__name__)
 @app.route('/' + TIBO_TELEGRAM_BOT_TOKEN, methods=['POST'])
 def getMessage():
     bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    bot.send_message(41365750, 'Bot started in Heroku cloud after get messages')
     return "!", 200
 
 
