@@ -39,16 +39,18 @@ OPEN_WAETHER_MAP_TOKEN = 'e92f4ab649c62931261157c7cf958e1d'
 def listener(messages):
     """
     When new messages arrive TeleBot will call this function.
+    Note: This is called AFTER message handlers, so it won't interfere with processing.
     """
     for m in messages:
         if m.content_type == 'text':
             # print the sent message to the console
             first_name = getattr(m.chat, 'first_name', 'Unknown')
-            print(f"{first_name} [{m.chat.id}]: {m.text}")
+            print(f"Listener: {first_name} [{m.chat.id}]: {m.text}")
 
 
-bot = telebot.TeleBot(TIBO_TELEGRAM_BOT_TOKEN)
+bot = telebot.TeleBot(TIBO_TELEGRAM_BOT_TOKEN, threaded=False)
 bot.set_update_listener(listener)  # register listener
+print(f"Bot initialized with token: {TIBO_TELEGRAM_BOT_TOKEN[:10]}...")
 STICKERID = 'CAACAgIAAxkBAAMbXrPw-PFI1fxdd1PM4gvH4ByBzU8AAqwAA1dPFQieKyFie6ajbxkE'
 
 # USERS = set()
@@ -122,14 +124,17 @@ bar_members = {
 def command_start(m):
     try:
         cid = m.chat.id
-        print(f"Received /start command from chat {cid}")
+        print(f"Command_/start handler triggered! Chat ID: {cid}, Message: {m.text}")
         if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
             knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
             userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
+            print(f"Sending welcome messages to {cid}")
             bot.send_message(cid, "Hello, stranger, let me scan you...")
             bot.send_message(cid, "Scanning complete, I know you now")
             command_help(m)  # show the new user the help page
+            print(f"Successfully processed /start for new user {cid}")
         else:
+            print(f"User {cid} already known, sending existing user message")
             bot.send_message(cid, "I already know you, no need for me to scan you again!")
     except Exception as e:
         print(f"Error in command_start: {e}")
@@ -137,8 +142,8 @@ def command_start(m):
         traceback.print_exc()
         try:
             bot.send_message(m.chat.id, "Sorry, an error occurred. Please try again.")
-        except:
-            pass
+        except Exception as send_error:
+            print(f"Failed to send error message: {send_error}")
 
 
 @bot.message_handler(commands=['help'])
@@ -324,17 +329,28 @@ app = Flask(__name__)
 def getMessage():
     try:
         json_string = request.get_json()
+        print(f"Received webhook update: {json_string}")
         if json_string:
             # Convert dict to Update object
             update = telebot.types.Update.de_json(json_string)
+            print(f"Parsed update: {update}")
             if update:
+                # Check if update has a message
+                if update.message:
+                    print(f"Update contains message: {update.message.text if update.message.text else 'No text'}")
+                # Process updates - this will trigger message handlers
                 bot.process_new_updates([update])
+                print(f"Processed update successfully")
+            else:
+                print("Warning: Update object is None")
+        # Return immediately to avoid timeout
         return "!", 200
     except Exception as e:
         print(f"Error processing webhook update: {e}")
         import traceback
         traceback.print_exc()
-        return "!", 200  # Return 200 to prevent Telegram from retrying
+        # Still return 200 to prevent Telegram from retrying
+        return "!", 200
 
 
 @app.route('/')
@@ -344,12 +360,36 @@ def webhook():
         webhook_url = f'https://tibo-telegram-bot.onrender.com/{TIBO_TELEGRAM_BOT_TOKEN}'
         bot.set_webhook(url=webhook_url)
         print(f"Webhook set to: {webhook_url}")
-        return f"Webhook configured: {webhook_url}", 200
+        # Verify webhook info
+        webhook_info = bot.get_webhook_info()
+        print(f"Webhook info: {webhook_info}")
+        return f"Webhook configured: {webhook_url}<br>Webhook info: {webhook_info}", 200
     except Exception as e:
         print(f"Error setting webhook: {e}")
         import traceback
         traceback.print_exc()
         return f"Error: {str(e)}", 500
+
+
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return "OK", 200
+
+
+@app.route('/debug')
+def debug():
+    """Debug endpoint to check bot status"""
+    try:
+        webhook_info = bot.get_webhook_info()
+        return {
+            "bot_token_set": bool(TIBO_TELEGRAM_BOT_TOKEN),
+            "webhook_info": str(webhook_info),
+            "known_users_count": len(knownUsers),
+            "message_handlers": "Registered"
+        }, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 
 first_request = True
