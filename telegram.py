@@ -14,6 +14,7 @@ bot.
 import os
 import requests
 import random
+import math
 import logging
 # import json
 
@@ -39,15 +40,18 @@ OPEN_WAETHER_MAP_TOKEN = 'e92f4ab649c62931261157c7cf958e1d'
 def listener(messages):
     """
     When new messages arrive TeleBot will call this function.
+    Note: This is called AFTER message handlers, so it won't interfere with processing.
     """
     for m in messages:
         if m.content_type == 'text':
             # print the sent message to the console
-            print(str(m.chat.first_name) + " [" + str(m.chat.id) + "]: " + m.text)
+            first_name = getattr(m.chat, 'first_name', 'Unknown')
+            print(f"Listener: {first_name} [{m.chat.id}]: {m.text}")
 
 
-bot = telebot.TeleBot(TIBO_TELEGRAM_BOT_TOKEN)
+bot = telebot.TeleBot(TIBO_TELEGRAM_BOT_TOKEN, threaded=False)
 bot.set_update_listener(listener)  # register listener
+print(f"Bot initialized with token: {TIBO_TELEGRAM_BOT_TOKEN[:10]}...")
 STICKERID = 'CAACAgIAAxkBAAMbXrPw-PFI1fxdd1PM4gvH4ByBzU8AAqwAA1dPFQieKyFie6ajbxkE'
 
 # USERS = set()
@@ -65,6 +69,7 @@ commands = {  # command description used in the "help" command
     'погода': 'по-русски',
     'bar': 'GO DRINK',
     'mem': 'send memories',
+    'meme': 'send memories pi=3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679',
     'emotion': 'AI @albert_ai_bot love you so much my lifehack' 
 }
 
@@ -119,15 +124,28 @@ bar_members = {
 # handle the "/start" command
 @bot.message_handler(commands=['start'])
 def command_start(m):
-    cid = m.chat.id
-    if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
-        knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
-        userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
-        bot.send_message(cid, "Hello, stranger, let me scan you...")
-        bot.send_message(cid, "Scanning complete, I know you now")
-        command_help(m)  # show the new user the help page
-    else:
-        bot.send_message(cid, "I already know you, no need for me to scan you again!")
+    try:
+        cid = m.chat.id
+        print(f"Command_/start handler triggered! Chat ID: {cid}, Message: {m.text}")
+        if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
+            knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
+            userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
+            print(f"Sending welcome messages to {cid}")
+            bot.send_message(cid, "Hello, stranger, let me scan you...")
+            bot.send_message(cid, "Scanning complete, I know you now")
+            command_help(m)  # show the new user the help page
+            print(f"Successfully processed /start for new user {cid}")
+        else:
+            print(f"User {cid} already known, sending existing user message")
+            bot.send_message(cid, "I already know you, no need for me to scan you again!")
+    except Exception as e:
+        print(f"Error in command_start: {e}")
+        import traceback
+        traceback.print_exc()
+        try:
+            bot.send_message(m.chat.id, "Sorry, an error occurred. Please try again.")
+        except Exception as send_error:
+            print(f"Failed to send error message: {send_error}")
 
 
 @bot.message_handler(commands=['help'])
@@ -147,9 +165,11 @@ def weather_get(apikey, city):
     try:
         r = requests.get("https://api.openweathermap.org/data/2.5/weather",
                          params={'q': city, 'units': 'metric', 'APPID': apikey})
+        r.raise_for_status()
+        return r.json()
     except Exception as e:
-        print("Exception (forecast):", e)
-    return (r.json())
+        print(f"Weather error: {e}")
+        return None
 
 
 @bot.message_handler(commands=['weather', 'погода'])
@@ -160,12 +180,37 @@ def command_weather(message: Message):
     city = command_params[1] if params_count > 1 else default_city
     weather = weather_get(OPEN_WAETHER_MAP_TOKEN, city)
     print(weather)
+    if weather is None:
+        bot.send_message(cid, f'Failed to get weather data for {city}')
+        return
     conditions = weather['weather'][0]['description']
     current_temp = weather['main']['temp']
     temp_min = weather['main']['temp_min']
     temp_max = weather['main']['temp_max']
     bot.send_message(cid,
                      f'{current_temp} {conditions}, up to {temp_max}, at night {temp_min}')
+
+
+@bot.message_handler(commands=['8', 'eight', 'восемь', 'рандом'])
+def command_eight(message: Message):
+    cid = message.chat.id
+    command_params = message.text.split()
+    chislo = random.randint(1, 100)
+    print(chislo)
+    bot.send_message(cid, f'{chislo}')
+    bot.send_message(cid,
+                     f'{chislo}')
+
+
+@bot.message_handler(commands=['3.14', '3', 'three', 'три', 'pi', 'пи'])
+def command_pi(message: Message):
+    cid = message.chat.id
+    command_params = message.text.split()
+    pi = math.pi
+    print(pi)
+    bot.send_message(cid, f'{pi}')
+    bot.send_message(cid,
+                     f'{pi}')
 
 
 def listToString(s):
@@ -220,8 +265,25 @@ def command_mem(message: Message):
     bot.send_photo(cid, mem[0])
 
 
+@bot.message_handler(commands=['meme'])
+def command_mem(message: Message):
+    cid = message.chat.id
+    r = requests.get("https://api.imgflip.com/get_memes")
+    print(r.content)
+    json_data = r.json()
+    list_mem = json_data['data']['memes']
+    # print(list_mem)
+    count_memes = len(list_mem)
+    meme = []
+    for i in range(0, count_memes):
+        meme.append(json_data['data']['memes'][i]['url'])
+        # print(mem[i])
+    random.shuffle(meme)
+    bot.send_photo(cid, meme[0])
+
+
 @bot.message_handler(commands=['help_auth'])
-def command_help(message):
+def command_help_auth(message):
     keyboard = telebot.types.InlineKeyboardMarkup()
     keyboard.add(
         telebot.types.InlineKeyboardButton(
@@ -238,36 +300,54 @@ def command_help(message):
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
-nltk.download([
-    "vader_lexicon",
-])
+# Lazy initialization of NLTK sentiment analyzer
+_sia = None
 
-sia = SentimentIntensityAnalyzer()
+
+def _ensure_nltk_data():
+    """Ensure NLTK data is downloaded (non-blocking check)."""
+    try:
+        nltk.data.find('sentiment/vader_lexicon.zip')
+    except LookupError:
+        # Only download if not found
+        nltk.download('vader_lexicon', quiet=True)
+
+
+def _get_sia():
+    """Get or initialize SentimentIntensityAnalyzer."""
+    global _sia
+    if _sia is None:
+        _ensure_nltk_data()
+        _sia = SentimentIntensityAnalyzer()
+    return _sia
 
 
 def is_positive(message: str) -> str:
     """True if message has positive compound sentiment, False otherwise."""
-    if sia.polarity_scores(message)["compound"] > 0.75:
-        return f"😁 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > 0.5:
-        return f"😀 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > 0.25:
-        return f"😊 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > 0:
-        return f"🤨 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -0.25:
-        return f"😥 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -0.5:
-        return f"😈 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -0.75:
-        return f"👹 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -1:
-        return f"🤬 {sia.polarity_scores(message)}"
+    sia = _get_sia()
+    scores = sia.polarity_scores(message)
+    compound = scores["compound"]
+    if compound > 0.75:
+        return f"😁 {scores}"
+    elif compound > 0.5:
+        return f"😀 {scores}"
+    elif compound > 0.25:
+        return f"😊 {scores}"
+    elif compound > 0:
+        return f"🤨 {scores}"
+    elif compound > -0.25:
+        return f"😥 {scores}"
+    elif compound > -0.5:
+        return f"😈 {scores}"
+    elif compound > -0.75:
+        return f"👹 {scores}"
+    elif compound > -1:
+        return f"🤬 {scores}"
     else:
         return "🙄"
 
 
-@bot.message_handler(commands=['emotion'])
+@bot.message_handler(commands=['emotion', 'themes', 'idea', 'more', 'mind', 'context', 'echo', 'bet', 'produce', 'think', 'note', 'tibo', 'agenda', 'graph', 'map', 'push', 'fact', 'top', 'stat', 'game', 'quiz', 'test', 'chat', 'bio', 'date', 'rpg', 'lol', 'notify', 'quote', 'advice', 'contact', 'donate', 'share', 'random', 'schedule', 'settings', 'new'])
 def sentiment_handler(message: Message):
     msg = bot.reply_to(message, """\
     Send your text
@@ -288,15 +368,69 @@ app = Flask(__name__)
 
 @app.route('/' + TIBO_TELEGRAM_BOT_TOKEN, methods=['POST'])
 def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
+    try:
+        json_string = request.get_json()
+        print(f"Received webhook update: {json_string}")
+        if json_string:
+            # Convert dict to Update object
+            update = telebot.types.Update.de_json(json_string)
+            print(f"Parsed update: {update}")
+            if update:
+                # Check if update has a message
+                if update.message:
+                    print(f"Update contains message: {update.message.text if update.message.text else 'No text'}")
+                # Process updates - this will trigger message handlers
+                bot.process_new_updates([update])
+                print(f"Processed update successfully")
+            else:
+                print("Warning: Update object is None")
+        # Return immediately to avoid timeout
+        return "!", 200
+    except Exception as e:
+        print(f"Error processing webhook update: {e}")
+        import traceback
+        traceback.print_exc()
+        # Still return 200 to prevent Telegram from retrying
+        return "!", 200
 
 
 @app.route('/')
 def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://tibo-telegram-bot.onrender.com/' + TIBO_TELEGRAM_BOT_TOKEN)
-    return "?", 200
+    try:
+        bot.remove_webhook()
+        webhook_url = f'https://tibo-telegram-bot.onrender.com/{TIBO_TELEGRAM_BOT_TOKEN}'
+        bot.set_webhook(url=webhook_url)
+        print(f"Webhook set to: {webhook_url}")
+        # Verify webhook info
+        webhook_info = bot.get_webhook_info()
+        print(f"Webhook info: {webhook_info}")
+        return f"Webhook configured: {webhook_url}<br>Webhook info: {webhook_info}", 200
+    except Exception as e:
+        print(f"Error setting webhook: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"Error: {str(e)}", 500
+
+
+@app.route('/health')
+def health():
+    """Health check endpoint"""
+    return "OK", 200
+
+
+@app.route('/debug')
+def debug():
+    """Debug endpoint to check bot status"""
+    try:
+        webhook_info = bot.get_webhook_info()
+        return {
+            "bot_token_set": bool(TIBO_TELEGRAM_BOT_TOKEN),
+            "webhook_info": str(webhook_info),
+            "known_users_count": len(knownUsers),
+            "message_handlers": "Registered"
+        }, 200
+    except Exception as e:
+        return {"error": str(e)}, 500
 
 
 first_request = True
