@@ -424,7 +424,7 @@ def webhook():
 
 
 @app.route('/restart')
-def webhook():
+def webhook_restart():
     try:
         bot.remove_webhook()
         webhook_url = f'https://api.render.com/v1/services/{service_id}/restart'
