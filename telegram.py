@@ -254,31 +254,49 @@ def command_help_auth(message):
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
-nltk.download([
-    "vader_lexicon",
-])
+# Lazy initialization of NLTK sentiment analyzer
+_sia = None
 
-sia = SentimentIntensityAnalyzer()
+
+def _ensure_nltk_data():
+    """Ensure NLTK data is downloaded (non-blocking check)."""
+    try:
+        nltk.data.find('sentiment/vader_lexicon.zip')
+    except LookupError:
+        # Only download if not found
+        nltk.download('vader_lexicon', quiet=True)
+
+
+def _get_sia():
+    """Get or initialize SentimentIntensityAnalyzer."""
+    global _sia
+    if _sia is None:
+        _ensure_nltk_data()
+        _sia = SentimentIntensityAnalyzer()
+    return _sia
 
 
 def is_positive(message: str) -> str:
     """True if message has positive compound sentiment, False otherwise."""
-    if sia.polarity_scores(message)["compound"] > 0.75:
-        return f"😁 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > 0.5:
-        return f"😀 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > 0.25:
-        return f"😊 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > 0:
-        return f"🤨 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -0.25:
-        return f"😥 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -0.5:
-        return f"😈 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -0.75:
-        return f"👹 {sia.polarity_scores(message)}"
-    elif sia.polarity_scores(message)["compound"] > -1:
-        return f"🤬 {sia.polarity_scores(message)}"
+    sia = _get_sia()
+    scores = sia.polarity_scores(message)
+    compound = scores["compound"]
+    if compound > 0.75:
+        return f"😁 {scores}"
+    elif compound > 0.5:
+        return f"😀 {scores}"
+    elif compound > 0.25:
+        return f"😊 {scores}"
+    elif compound > 0:
+        return f"🤨 {scores}"
+    elif compound > -0.25:
+        return f"😥 {scores}"
+    elif compound > -0.5:
+        return f"😈 {scores}"
+    elif compound > -0.75:
+        return f"👹 {scores}"
+    elif compound > -1:
+        return f"🤬 {scores}"
     else:
         return "🙄"
 
