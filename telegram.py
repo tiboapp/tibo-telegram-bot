@@ -37,6 +37,17 @@ OPEN_WAETHER_MAP_TOKEN = 'e92f4ab649c62931261157c7cf958e1d'
 # TIMEZONE_COMMON_NAME = config.TIMEZONE_COMMON_NAME
 
 
+service_id = os.environ['RENDER_SERVICE_ID']
+api_key = os.environ['RENDER_API_KEY']
+url = f"https://api.render.com/v1/services/{service_id}/restart"
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+response = requests.post(url, headers=headers)
+print(response.status_code)
+
+
 def listener(messages):
     """
     When new messages arrive TeleBot will call this function.
