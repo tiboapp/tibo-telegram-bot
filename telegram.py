@@ -43,7 +43,8 @@ def listener(messages):
     for m in messages:
         if m.content_type == 'text':
             # print the sent message to the console
-            print(str(m.chat.first_name) + " [" + str(m.chat.id) + "]: " + m.text)
+            first_name = getattr(m.chat, 'first_name', 'Unknown')
+            print(f"{first_name} [{m.chat.id}]: {m.text}")
 
 
 bot = telebot.TeleBot(TIBO_TELEGRAM_BOT_TOKEN)
@@ -119,15 +120,25 @@ bar_members = {
 # handle the "/start" command
 @bot.message_handler(commands=['start'])
 def command_start(m):
-    cid = m.chat.id
-    if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
-        knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
-        userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
-        bot.send_message(cid, "Hello, stranger, let me scan you...")
-        bot.send_message(cid, "Scanning complete, I know you now")
-        command_help(m)  # show the new user the help page
-    else:
-        bot.send_message(cid, "I already know you, no need for me to scan you again!")
+    try:
+        cid = m.chat.id
+        print(f"Received /start command from chat {cid}")
+        if cid not in knownUsers:  # if user hasn't used the "/start" command yet:
+            knownUsers.append(cid)  # save user id, so you could brodcast messages to all users of this bot later
+            userStep[cid] = 0  # save user id and his current "command level", so he can use the "/getImage" command
+            bot.send_message(cid, "Hello, stranger, let me scan you...")
+            bot.send_message(cid, "Scanning complete, I know you now")
+            command_help(m)  # show the new user the help page
+        else:
+            bot.send_message(cid, "I already know you, no need for me to scan you again!")
+    except Exception as e:
+        print(f"Error in command_start: {e}")
+        import traceback
+        traceback.print_exc()
+        try:
+            bot.send_message(m.chat.id, "Sorry, an error occurred. Please try again.")
+        except:
+            pass
 
 
 @bot.message_handler(commands=['help'])
@@ -293,17 +304,34 @@ app = Flask(__name__)
 
 @app.route('/' + TIBO_TELEGRAM_BOT_TOKEN, methods=['POST'])
 def getMessage():
-    json_string = request.get_json()
-    if json_string:
-        bot.process_new_updates([telebot.types.Update.de_json(json_string)])
-    return "!", 200
+    try:
+        json_string = request.get_json()
+        if json_string:
+            # Convert dict to Update object
+            update = telebot.types.Update.de_json(json_string)
+            if update:
+                bot.process_new_updates([update])
+        return "!", 200
+    except Exception as e:
+        print(f"Error processing webhook update: {e}")
+        import traceback
+        traceback.print_exc()
+        return "!", 200  # Return 200 to prevent Telegram from retrying
 
 
 @app.route('/')
 def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://tibo-telegram-bot.onrender.com/' + TIBO_TELEGRAM_BOT_TOKEN)
-    return "?", 200
+    try:
+        bot.remove_webhook()
+        webhook_url = f'https://tibo-telegram-bot.onrender.com/{TIBO_TELEGRAM_BOT_TOKEN}'
+        bot.set_webhook(url=webhook_url)
+        print(f"Webhook set to: {webhook_url}")
+        return f"Webhook configured: {webhook_url}", 200
+    except Exception as e:
+        print(f"Error setting webhook: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"Error: {str(e)}", 500
 
 
 first_request = True
