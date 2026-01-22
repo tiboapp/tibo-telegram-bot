@@ -65,6 +65,7 @@ commands = {  # command description used in the "help" command
     'погода': 'по-русски',
     'bar': 'GO DRINK',
     'mem': 'send memories'
+    'emotion': 'AI @albert_ai_bot love you so much my lifehack' 
 }
 
 beer_photo = [
@@ -93,7 +94,7 @@ beer_photo = [
 
 bar_members = {
     '41365750': {
-        'username': 'csredrat',
+        'username': 'ChydakovSergey',
         'first': 'Sergey'
     },
     '670403191': {
@@ -224,7 +225,7 @@ def command_help(message):
     keyboard = telebot.types.InlineKeyboardMarkup()
     keyboard.add(
         telebot.types.InlineKeyboardButton(
-            'Message the developer', url='telegram.me/csredrat'
+            'Message the developer', url='telegram.me/ChudakovSergey'
         )
     )
     bot.send_message(
@@ -294,7 +295,7 @@ def getMessage():
 @app.route('/')
 def webhook():
     bot.remove_webhook()
-    bot.set_webhook(url='https://tibo-telegram-bot.herokuapp.com/' + TIBO_TELEGRAM_BOT_TOKEN)
+    bot.set_webhook(url='https://tibo-telegram-bot.onrender.com/' + TIBO_TELEGRAM_BOT_TOKEN)
     return "?", 200
 
 
