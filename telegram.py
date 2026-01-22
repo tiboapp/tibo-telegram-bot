@@ -14,6 +14,7 @@ bot.
 import os
 import requests
 import random
+import math
 import logging
 # import json
 
@@ -68,6 +69,7 @@ commands = {  # command description used in the "help" command
     'погода': 'по-русски',
     'bar': 'GO DRINK',
     'mem': 'send memories',
+    'meme': 'send memories pi=3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679',
     'emotion': 'AI @albert_ai_bot love you so much my lifehack' 
 }
 
@@ -189,6 +191,28 @@ def command_weather(message: Message):
                      f'{current_temp} {conditions}, up to {temp_max}, at night {temp_min}')
 
 
+@bot.message_handler(commands=['8', 'eight', 'восемь', 'рандом'])
+def command_eight(message: Message):
+    cid = message.chat.id
+    command_params = message.text.split()
+    chislo = random.randint(1, 100)
+    print(chislo)
+    bot.send_message(cid, f'{chislo}')
+    bot.send_message(cid,
+                     f'{chislo}')
+
+
+@bot.message_handler(commands=['3.14', '3', 'three', 'три', 'pi', 'пи'])
+def command_pi(message: Message):
+    cid = message.chat.id
+    command_params = message.text.split()
+    pi = math.pi
+    print(pi)
+    bot.send_message(cid, f'{pi}')
+    bot.send_message(cid,
+                     f'{pi}')
+
+
 def listToString(s):
     # initialize an empty string
     str1 = " "
@@ -239,6 +263,23 @@ def command_mem(message: Message):
         # print(mem[i])
     random.shuffle(mem)
     bot.send_photo(cid, mem[0])
+
+
+@bot.message_handler(commands=['meme'])
+def command_mem(message: Message):
+    cid = message.chat.id
+    r = requests.get("https://api.imgflip.com/get_memes")
+    print(r.content)
+    json_data = r.json()
+    list_mem = json_data['data']['memes']
+    # print(list_mem)
+    count_memes = len(list_mem)
+    meme = []
+    for i in range(0, count_memes):
+        meme.append(json_data['data']['memes'][i]['url'])
+        # print(mem[i])
+    random.shuffle(meme)
+    bot.send_photo(cid, meme[0])
 
 
 @bot.message_handler(commands=['help_auth'])
@@ -306,7 +347,7 @@ def is_positive(message: str) -> str:
         return "🙄"
 
 
-@bot.message_handler(commands=['emotion'])
+@bot.message_handler(commands=['emotion', 'themes', 'idea', 'more', 'mind', 'context', 'echo', 'bet', 'produce', 'think', 'note', 'tibo', 'agenda', 'graph', 'map', 'push', 'fact', 'top', 'stat', 'game', 'quiz', 'test', 'chat', 'bio', 'date', 'rpg', 'lol', 'notify', 'quote', 'advice', 'contact', 'donate', 'share', 'random', 'schedule', 'settings', 'new'])
 def sentiment_handler(message: Message):
     msg = bot.reply_to(message, """\
     Send your text
