@@ -16124,3 +16124,65 @@ Connecting to distrowatch.com (distrowatch.com)|82.103.129.71|:443... failed: Co
 Connecting to distrowatch.com (distrowatch.com)|2a00:9080:1:58a::1|:443... failed: Network is unreachable.
 Converted links in 0 files in 0 seconds.
 Request 1681/15000
+140.82.121.3
+Connecting to github.com (github.com)|140.82.121.3|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/html]
+Saving to: ‘github.com/meteoritt/gentleman.html’
+
+     0K .......... .......... .......... .......... ..........  356K
+    50K .......... .......... .......... .......... ..........  861K
+   100K .......... .......... .......... .......... .......... 1.48M
+   150K .......... .......... .......... .......... .......... 2.01M
+   200K .......... .......... .......... .......... .......... 1.74M
+   250K .......... .......... .......... .......... .......... 1.40M
+   300K .......... .......... .......... .......... .......... 2.09M
+   350K .......... .......... .......... .......... .......... 1.56M
+   400K .......... .......... .......... .......... .......... 1.64M
+   450K .......... .......... .......... .......... .......... 2.55M
+   500K .......... .......... .......... .......... .......... 1.76M
+   550K .......... .......... .......... .......... .......... 1.77M
+   600K .......... .......... .......... .......... .......... 2.79M
+   650K .......... .....Both --no-clobber and --convert-links were specified, only --convert-links will be used.
+..... .--2026-01-22 05:49:53--  https://distrowatch.com/table.php?distribution=kdeneon
+......... .......... .......... 4.18M
+   700K .......... .........                  Resolving distrowatch.com (distrowatch.com)...                  7.09M=0.5s
+
+2026-01-22 05:49:53 (1.38 MB/s) - ‘github.com/meteoritt/gentleman.html’ saved [736512]
+
+82.103.129.71, 2a00:9080:1:58a::1
+Connecting to distrowatch.com (distrowatch.com)|82.103.129.71|:443... failed: Connection refused.
+Connecting to distrowatch.com (distrowatch.com)|2a00:9080:1:58a::1|:443... failed: Network is unreachable.
+Converted links in 0 files in 0 seconds.
+Request 1682/15000
+Loading robots.txt; please ignore errors.
+--2026-01-22 05:49:53--  https://camo.githubusercontent.com/robots.txt
+Resolving camo.githubusercontent.com (camo.githubusercontent.com)... Both --no-clobber and --convert-links were specified, only --convert-links will be used.
+--2026-01-22 05:49:55--  https://distrowatch.com/table.php?distribution=kdeneon
+Resolving distrowatch.com (distrowatch.com)... 82.103.129.71, 2a00:9080:1:58a::1
+Connecting to distrowatch.com (distrowatch.com)|82.103.129.71|:443... failed: Connection refused.
+Connecting to distrowatch.com (distrowatch.com)|2a00:9080:1:58a::1|:443... failed: Network is unreachable.
+Converted links in 0 files in 0 seconds.
+Request 1683/15000
+Both --no-clobber and --convert-links were specified, only --convert-links will be used.
+--2026-01-22 05:49:56--  https://distrowatch.com/table.php?distribution=kdeneon
+Resolving distrowatch.com (distrowatch.com)... 82.103.129.71, 2a00:9080:1:58a::1
+Connecting to distrowatch.com (distrowatch.com)|82.103.129.71|:443... failed: Connection refused.
+Connecting to distrowatch.com (distrowatch.com)|2a00:9080:1:58a::1|:443... failed: Network is unreachable.
+Converted links in 0 files in 0 seconds.
+Request 1684/15000
+185.199.110.133, 185.199.108.133, 185.199.109.133, ...
+Connecting to camo.githubusercontent.com (camo.githubusercontent.com)|185.199.110.133|:443... Both --no-clobber and --convert-links were specified, only --convert-links will be used.
+--2026-01-22 05:49:58--  https://distrowatch.com/table.php?distribution=kdeneon
+Resolving distrowatch.com (distrowatch.com)... 82.103.129.71, 2a00:9080:1:58a::1
+Connecting to distrowatch.com (distrowatch.com)|82.103.129.71|:443... connected.
+HTTP request sent, awaiting response... failed: Connection refused.
+Connecting to distrowatch.com (distrowatch.com)|2a00:9080:1:58a::1|:443... failed: Network is unreachable.
+Converted links in 0 files in 0 seconds.
+Request 1685/15000
+404 Not Found
+2026-01-22 05:49:59 ERROR 404: Not Found.
+
+--2026-01-22 05:49:59--  https://camo.githubusercontent.com/11c3a6b5dc3320254cbf185d39304b434a55b6a1de8bba19c5b6a455f1e85117/68747470733a2f2f76697369746f722d62616467652e6c616f62692e6963752f62616467653f706167655f69643d43535265645261742e67656e746c656d616e
+Reusing existing connection to camo.githubusercontent.com:443.
+HTTP request sent, awaiting response... 
