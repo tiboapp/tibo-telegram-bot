@@ -426,23 +426,19 @@ def webhook():
 @app.route('/restart')
 def webhook_restart():
     try:
-        bot.remove_webhook()
-        webhook_url = f'https://api.render.com/v1/services/{service_id}/restart'
+        restart_url = f"https://api.render.com/v1/services/{service_id}/restart"
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
-        bot.set_webhook(url=webhook_url)
-        def custom_sender():
-            response = requests.post(webhook_url, data=headers)
-            return response
-        print(f"Webhook set to: {webhook_url}")
-        # Verify webhook info
-        webhook_info = bot.get_webhook_info()
-        print(f"Webhook info: {webhook_info}")
-        return f"Webhook configured: {webhook_url}<br>Webhook info: {webhook_info}", 200
+        response = requests.post(restart_url, headers=headers)
+        print(f"Restart request sent. Status code: {response.status_code}")
+        if response.status_code == 200:
+            return f"Service restart initiated successfully. Status: {response.status_code}", 200
+        else:
+            return f"Failed to restart service. Status: {response.status_code}, Response: {response.text}", response.status_code
     except Exception as e:
-        print(f"Error setting webhook: {e}")
+        print(f"Error restarting service: {e}")
         import traceback
         traceback.print_exc()
         return f"Error: {str(e)}", 500
