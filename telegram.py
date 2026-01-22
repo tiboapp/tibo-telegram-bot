@@ -64,7 +64,7 @@ commands = {  # command description used in the "help" command
     'weather': 'OpenWeatherMap data',
     'погода': 'по-русски',
     'bar': 'GO DRINK',
-    'mem': 'send memories'
+    'mem': 'send memories',
     'emotion': 'AI @albert_ai_bot love you so much my lifehack' 
 }
 
@@ -299,9 +299,14 @@ def webhook():
     return "?", 200
 
 
-@app.before_first_request
+first_request = True
+
+@app.before_request
 def before_first_request_func():
-    bot.send_message(41365750, 'Bot started in Heroku cloud')
+    global first_request
+    if first_request:
+        bot.send_message(41365750, 'Bot started in Render cloud')  # Updated message
+        first_request = False
 
 
 if __name__ == "__main__":
