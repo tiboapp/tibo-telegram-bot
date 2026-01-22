@@ -162,6 +162,9 @@ def command_weather(message: Message):
     city = command_params[1] if params_count > 1 else default_city
     weather = weather_get(OPEN_WAETHER_MAP_TOKEN, city)
     print(weather)
+    if weather is None:
+        bot.send_message(cid, f'Failed to get weather data for {city}')
+        return
     conditions = weather['weather'][0]['description']
     current_temp = weather['main']['temp']
     temp_min = weather['main']['temp_min']
@@ -223,7 +226,7 @@ def command_mem(message: Message):
 
 
 @bot.message_handler(commands=['help_auth'])
-def command_help(message):
+def command_help_auth(message):
     keyboard = telebot.types.InlineKeyboardMarkup()
     keyboard.add(
         telebot.types.InlineKeyboardButton(
