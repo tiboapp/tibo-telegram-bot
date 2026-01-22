@@ -44,8 +44,8 @@ headers = {
     "Authorization": f"Bearer {api_key}",
     "Content-Type": "application/json"
 }
-response = requests.post(url, headers=headers)
-print(response.status_code)
+# response = requests.post(url, headers=headers)
+# print(response.status_code)
 
 
 def listener(messages):
