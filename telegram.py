@@ -147,9 +147,11 @@ def weather_get(apikey, city):
     try:
         r = requests.get("https://api.openweathermap.org/data/2.5/weather",
                          params={'q': city, 'units': 'metric', 'APPID': apikey})
+        r.raise_for_status()
+        return r.json()
     except Exception as e:
-        print("Exception (forecast):", e)
-    return (r.json())
+        print(f"Weather error: {e}")
+        return None
 
 
 @bot.message_handler(commands=['weather', 'погода'])
@@ -288,7 +290,9 @@ app = Flask(__name__)
 
 @app.route('/' + TIBO_TELEGRAM_BOT_TOKEN, methods=['POST'])
 def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    json_string = request.get_json()
+    if json_string:
+        bot.process_new_updates([telebot.types.Update.de_json(json_string)])
     return "!", 200
 
 
