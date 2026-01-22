@@ -423,7 +423,7 @@ def webhook():
         return f"Error: {str(e)}", 500
 
 
-@app.route('/restart')
+@app.route('/restart', methods=['GET', 'POST'])
 def webhook_restart():
     try:
         restart_url = f"https://api.render.com/v1/services/{service_id}/restart"
