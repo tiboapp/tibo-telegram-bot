@@ -423,6 +423,31 @@ def webhook():
         return f"Error: {str(e)}", 500
 
 
+@app.route('/restart')
+def webhook():
+    try:
+        bot.remove_webhook()
+        webhook_url = f'https://api.render.com/v1/services/{service_id}/restart'
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        bot.set_webhook(url=webhook_url)
+        def custom_sender():
+            response = requests.post(webhook_url, data=headers)
+            return response
+        print(f"Webhook set to: {webhook_url}")
+        # Verify webhook info
+        webhook_info = bot.get_webhook_info()
+        print(f"Webhook info: {webhook_info}")
+        return f"Webhook configured: {webhook_url}<br>Webhook info: {webhook_info}", 200
+    except Exception as e:
+        print(f"Error setting webhook: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"Error: {str(e)}", 500
+
+
 @app.route('/health')
 def health():
     """Health check endpoint"""
@@ -442,6 +467,15 @@ def debug():
         }, 200
     except Exception as e:
         return {"error": str(e)}, 500
+
+
+url = f"https://api.render.com/v1/services/{service_id}/restart"
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+response = requests.post(url, headers=headers)
+print(response.status_code)
 
 
 first_request = True
