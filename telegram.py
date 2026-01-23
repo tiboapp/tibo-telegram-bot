@@ -110,7 +110,7 @@ beer_photo = [
 
 bar_members = {
     '41365750': {
-        'username': 'ChydakovSergey',
+        'username': 'ChudakovSergey',
         'first': 'Sergey'
     },
     '670403191': {
