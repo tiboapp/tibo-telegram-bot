@@ -37,6 +37,17 @@ OPEN_WAETHER_MAP_TOKEN = 'e92f4ab649c62931261157c7cf958e1d'
 # TIMEZONE_COMMON_NAME = config.TIMEZONE_COMMON_NAME
 
 
+service_id = os.environ['RENDER_SERVICE_ID']
+api_key = os.environ['RENDER_API_KEY']
+url = f"https://api.render.com/v1/services/{service_id}/restart"
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+# response = requests.post(url, headers=headers)
+# print(response.status_code)
+
+
 def listener(messages):
     """
     When new messages arrive TeleBot will call this function.
@@ -99,7 +110,7 @@ beer_photo = [
 
 bar_members = {
     '41365750': {
-        'username': 'ChydakovSergey',
+        'username': 'ChudakovSergey',
         'first': 'Sergey'
     },
     '670403191': {
@@ -412,6 +423,27 @@ def webhook():
         return f"Error: {str(e)}", 500
 
 
+@app.route('/restart', methods=['GET', 'POST'])
+def webhook_restart():
+    try:
+        restart_url = f"https://api.render.com/v1/services/{service_id}/restart"
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.post(restart_url, headers=headers)
+        print(f"Restart request sent. Status code: {response.status_code}")
+        if response.status_code == 200:
+            return f"Service restart initiated successfully. Status: {response.status_code}", 200
+        else:
+            return f"Failed to restart service. Status: {response.status_code}, Response: {response.text}", response.status_code
+    except Exception as e:
+        print(f"Error restarting service: {e}")
+        import traceback
+        traceback.print_exc()
+        return f"Error: {str(e)}", 500
+
+
 @app.route('/health')
 def health():
     """Health check endpoint"""
@@ -431,6 +463,15 @@ def debug():
         }, 200
     except Exception as e:
         return {"error": str(e)}, 500
+
+
+url = f"https://api.render.com/v1/services/{service_id}/restart"
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
+response = requests.post(url, headers=headers)
+print(response.status_code)
 
 
 first_request = True
