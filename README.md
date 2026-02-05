@@ -11,4 +11,4 @@ Open Source Code (СПО): [https://github.com/ruopsdev/tibo-telegram-bot](https
 # License
 [NoBSD](https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License): [https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License](https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License)
 
-[https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License](NoBSD License): [https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License](https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License)
+[NoBSD License](https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License): [https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License](https://github.com/ruopsdev/tibo-telegram-bot/wiki/NoBSD-License)
